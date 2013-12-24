@@ -1,0 +1,5 @@
+description = "Ocaml implementation for a library allowing adaptive mesh refinement"
+version = "0.0.1"
+browse_interface = " Admere "
+archive(byte) = "libAdmere.cma"
+archive(native) = "libAdmere.cmxa"
