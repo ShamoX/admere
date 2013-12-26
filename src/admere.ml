@@ -1,4 +1,5 @@
 open AdmereTypes
+open AdmereExceptions
 open AdmereImplementation
 open AdmereParameter
 open AdmereUtils
@@ -16,6 +17,11 @@ module Admere =
       type cell =
           Node of I.t * cellMeta
         | Grid of cell array * cellMeta
+      ;;
+
+      let accessNodeValue = function
+        Node(v,_) -> v
+        | _ -> raise AMR_NotANode
       ;;
 
       (** This array of vectors allow to explore the grid l-1 of a cell of
@@ -40,7 +46,7 @@ module Admere =
 
       let rec iterRecValue f cL coor = function
         Node(v,_) -> f cL coor v
-        | Grid(cells) -> begin
+        | Grid(cells,_) -> begin
           for i = 0 to nbSubcells-1 do
             let nCoor = subCoordinate cL i coor in
             iterRecValue f (cL+1) nCoor cells.(i)
@@ -69,7 +75,7 @@ module Admere =
             let vect = subCoordinate cL i coor in
             subGrid.(i) <- newGrid (cL+1) vect
           done;
-          Grid(subGrid)
+          Grid(subGrid, newMeta ())
         end
       ;;
       (** Here are a description of the arguments used in this function :
@@ -164,44 +170,58 @@ module Admere =
       (** This function explore and do the refinement work *)
       let rec iterRefinement cL coor = function
         Node(v,m) -> begin
-          match T.mayAdjustRefinement v with
+          match I.mayAdjustRefinement v with
             DoRefine -> begin
               if cL < P.maxLevel then begin
                 (* Then we can do refinement *)
-                let nCells = Array.make nbSubcells (Node(v,m))
+                let nCells = Array.make nbSubcells (Node(v,m)) in
                 for i = 0 to nbSubcells-1 do
                   let relNewCoor =
                     generateRelativeCoordinate P.dim exploringVectors.(i)
                     (dxFromLevel (cL-1)) in
                   nCells.(i) <- Node(
-                    T.doRefine (cL+1) v coor relNewCoor,
+                    I.doRefine (cL+1) v coor relNewCoor,
                     newMeta ())
                 done;
-                (Grid(nCells), DoRefine)
+                (Grid(nCells, newMeta ()), DoRefine)
               end else
               (Node(v,m), DoRefine)
+            end
           | refinement -> (Node(v,m), refinement)
         end
-        | Grid(cells) -> begin
-          let allUnrefine = ref true in (* tells us if we can unrefine this cell *)
+        | Grid(cells, m) -> begin
+          let allUnrefine = ref true (* tells us if we can unrefine this cell *)
+          and data = ref [] (* This will serve to store  *)
+          in
           for i = 0 to nbSubcells-1 do
             let nCoor = subCoordinate cL i coor in
-            let (nCell, refinement) = iterRecValue f (cL+1) nCoor cells.(i) in
+            let (nCell, refinement) = iterRefinement (cL+1) nCoor cells.(i) in
             cells.(i) <- nCell;
             match refinement with
               DoRefine -> allUnrefine := false
             | DontRefine -> allUnrefine := false
-            | DoUnrefine -> ()
+            | DoUnrefine -> data := (accessNodeValue nCell, nCoor):: !data
+            (* filling the data parameter to unrefine, if necessary. *)
           done;
           if !allUnrefine then begin
             (* Here we must unrefine this cell *)
-
+            if List.length !data = nbSubcells then
+              let v = I.doUnrefine cL coor !data in (* Got value for futur new cell *)
+              (* Just in case we check that we are not in a case we could
+               * unrefine again... *)
+              match I.mayAdjustRefinement v with
+                DoRefine -> (Grid(cells, m), DoRefine) (* Refine or not refine,
+                that is the question. In this case we assume we shouldn't
+                unrefine*)
+            | DontRefine -> (Node(v, newMeta ()), DontRefine)
+            | DoUnrefine -> (Node(v, newMeta ()), DoUnrefine)
+            else (Grid(cells, m), DontRefine) (* here there was a bug probably... *)
           end else
-            (Grid(cells), DoRefine)
+            (Grid(cells, m), DoRefine)
         end
       ;;
       let checkRefinement () =
-        iterCheckRefinement 1 vectorOrigin
+        iterRefinement 1 vectorOrigin grid
       ;;
 
     end

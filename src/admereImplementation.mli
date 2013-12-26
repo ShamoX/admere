@@ -31,13 +31,13 @@ module type AdmereImplementation =
       * *)
 
     (** Function called when unrefinement is apply to a group of cells *)
-    val doUnrefine : int -> (t * float array) array -> float array -> t
+    val doUnrefine : int -> float array -> (t * float array) list -> t
     (** Here are a description of the arguments passed to this function :
       * - The first is the new cell level (if the merging cells were level l,
       * this argument will be l-1).
-      * - Second argument is an array of couple cell content + relative position
+      * - Second argument is the coordinate of the center of the new cell.
+      * - Third argument is an list of couple cell content + relative position
       * regarding the center of the futur cell.
-      * - Third argument is the coordinate of the center of the new cell.
       *
       * -> returned value will be use as the cell content of the merge
       * cell

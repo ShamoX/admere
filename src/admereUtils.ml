@@ -32,7 +32,7 @@ let generateCoordinate dim refVec dx coor =
   res
 ;;
 (** generate relative coordinates *)
-let generateCoordinate dim refVec dx =
+let generateRelativeCoordinate dim refVec dx =
   let res = Array.make dim 0.0 in
   for i = 0 to dim-1 do
     res.(i) <- refVec.(i) *. dx
