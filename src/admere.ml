@@ -168,10 +168,11 @@ module Admere =
 
       (*** AMR work section *)
       (** This function explore and do the refinement work *)
-      let rec iterRefinement cL coor = function
+      let rec iterRefinement has_changed cL coor = function
         Node(v,m) -> begin
           match I.mayAdjustRefinement v with
             DoRefine -> begin
+              has_changed := true;
               if cL < P.maxLevel then begin
                 (* Then we can do refinement *)
                 let nCells = Array.make nbSubcells (Node(v,m)) in
@@ -183,7 +184,10 @@ module Admere =
                     I.doRefine (cL+1) v coor relNewCoor,
                     newMeta ())
                 done;
-                (Grid(nCells, newMeta ()), DoRefine)
+                (* recursive on it. This allow to go down in one strait.
+                 * It may loop refining, unrefining if Implementation module
+                 * fail to provide a safe refinement process. *)
+                iterRefinement has_changed cL coor (Grid(nCells, newMeta ()))
               end else
               (Node(v,m), DoRefine)
             end
@@ -195,7 +199,7 @@ module Admere =
           in
           for i = 0 to nbSubcells-1 do
             let nCoor = subCoordinate cL i coor in
-            let (nCell, refinement) = iterRefinement (cL+1) nCoor cells.(i) in
+            let (nCell, refinement) = iterRefinement has_changed (cL+1) nCoor cells.(i) in
             cells.(i) <- nCell;
             match refinement with
               DoRefine -> allUnrefine := false
@@ -204,6 +208,7 @@ module Admere =
             (* filling the data parameter to unrefine, if necessary. *)
           done;
           if !allUnrefine then begin
+            has_changed := true;
             (* Here we must unrefine this cell *)
             if List.length !data = nbSubcells then
               let v = I.doUnrefine cL coor !data in (* Got value for futur new cell *)
@@ -217,11 +222,13 @@ module Admere =
             | DoUnrefine -> (Node(v, newMeta ()), DoUnrefine)
             else (Grid(cells, m), DontRefine) (* here there was a bug probably... *)
           end else
-            (Grid(cells, m), DoRefine)
+            (Grid(cells, m), DontRefine)
         end
       ;;
       let checkRefinement () =
-        iterRefinement 1 vectorOrigin grid
+        let has_changed = ref false in
+        ignore (iterRefinement has_changed 1 vectorOrigin grid);
+        !has_changed
       ;;
 
     end
