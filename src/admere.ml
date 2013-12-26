@@ -92,10 +92,12 @@ module Admere =
       and title = ref "Admere"
       ;;
 
-      let drawPoint ml cL coor v =
+      let drawPoint displayGrid ml cL coor v =
         let displayCoor = Array.make 2 0
-        and mlm_f = float_of_int (ml-1) in
-        (*Printf.printf "plotting (%f, %f) for %s\n" coor.(0) coor.(1) (I.toStr v);*)
+        and mlm_f = float_of_int (if displayGrid then ml-1 else ml-2) in
+        (*
+        Printf.printf "plotting (%f, %f) for %s\n" coor.(0) coor.(1) (I.toStr v);
+        *)
         for i = 0 to min ((Array.length coor)-1) 1 do
           displayCoor.(i) <- int_of_float ((coor.(i) +. 1.) *. (2. ** mlm_f))
         done;
@@ -110,7 +112,7 @@ module Admere =
           Printf.printf "\tGrid at (%d, %d) x (%d, %d)\n" (displayCoor.(0)-1)
           (displayCoor.(1)-1) 2 2;
           *)
-          draw_rect (displayCoor.(0)-1) (displayCoor.(1)-1) 2 2
+          if displayGrid then draw_rect (displayCoor.(0)-1) (displayCoor.(1)-1) 2 2
         end else (* We must plot a rectangle. *)
           let rHS = (Int.pow 2 (ml-cL)) - 1 in (* rectangle half size *)
           let x = displayCoor.(0) - rHS
@@ -122,12 +124,18 @@ module Admere =
             *)
             fill_rect x y (w-1) (h-1);
             set_color !gridColor;
-            draw_rect (x-1) (y-1) (w+1) (h+1)
+            if displayGrid then draw_rect (x-1) (y-1) (w+1) (h+1)
           end;
-        (*Pervasives.flush Pervasives.stdout;*)
+        (*
+        Pervasives.flush Pervasives.stdout;
+        *)
       ;;
-      let prepareDisplayGrid gc ml =
-        let size = (Int.pow 2 ml) + 1 in
+      let prepareDisplayGrid displayGrid gc ml =
+        let size = if displayGrid then
+          (Int.pow 2 ml) + 1
+        else
+          Int.pow 2 (ml-1)
+        in
         set_color gc;
         resize_window size size
       ;;
@@ -140,14 +148,14 @@ module Admere =
 
 
 
-      let drawGrid ?(optGridColor) ?(optTitle) () =
+      let drawGrid ?(displayGrid = true) ?(optGridColor) ?(optTitle) () =
         (match optGridColor with Some(c) -> gridColor := c | None -> ());
         (match optTitle with Some(t) -> title := t | None -> ());
         open_graph "";
         clear_graph ();
         set_window_title !title;
-        prepareDisplayGrid !gridColor P.maxLevel;
-        iter (drawPoint P.maxLevel);
+        prepareDisplayGrid displayGrid !gridColor P.maxLevel;
+        iter (drawPoint displayGrid P.maxLevel);
         dumpDisplayedGrid "toto.bmp"
       ;;
 

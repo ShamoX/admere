@@ -8,7 +8,7 @@ Random.init 10 ;;
 module TestParameter =
   struct
     let minLevel = 3
-    and maxLevel = 8
+    and maxLevel = 9
     and dim = 2
     ;;
   end

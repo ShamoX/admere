@@ -3,7 +3,7 @@ open TestExample;;
 
 begin
 try
-  Test.drawGrid ();
+  Test.drawGrid ~displayGrid:false ();
 with Invalid_argument(s) ->
   Printf.printf "An exception occurs : Invalid_argument(%s)" s;
   Pervasives.flush Pervasives.stdout
