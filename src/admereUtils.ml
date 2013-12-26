@@ -24,15 +24,22 @@ let generateVectors dim =
 
 (** generate coordinates from a reference vector, a dx and a reference
  * coordinates *)
-let generateCoordinate refVec dx coor =
-  if Array.length refVec <> Array.length coor then raise AMR_IncoherentArguments;
-  let dim = Array.length refVec in
+let generateCoordinate dim refVec dx coor =
   let res = Array.make dim 0.0 in
   for i = 0 to dim-1 do
     res.(i) <- coor.(i) +. refVec.(i) *. dx
   done;
   res
 ;;
+(** generate relative coordinates *)
+let generateCoordinate dim refVec dx =
+  let res = Array.make dim 0.0 in
+  for i = 0 to dim-1 do
+    res.(i) <- refVec.(i) *. dx
+  done;
+  res
+;;
+
 
 let dxFromLevel l =
   1. /.
