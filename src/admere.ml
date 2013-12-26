@@ -95,27 +95,36 @@ module Admere =
       let drawPoint ml cL coor v =
         let displayCoor = Array.make 2 0
         and mlm_f = float_of_int (ml-1) in
-        Printf.printf "plotting (%f, %f) for %s\n" coor.(0) coor.(1) (I.toStr v);
+        (*Printf.printf "plotting (%f, %f) for %s\n" coor.(0) coor.(1) (I.toStr v);*)
         for i = 0 to min ((Array.length coor)-1) 1 do
           displayCoor.(i) <- int_of_float ((coor.(i) +. 1.) *. (2. ** mlm_f))
         done;
         set_color (I.getColor v);
         if ml = cL then begin (* Only plots a dot *)
+          (*
           Printf.printf "\tDisplayed at (%d, %d)\n" displayCoor.(0) displayCoor.(1);
-          Pervasives.flush Pervasives.stdout;
-          plot displayCoor.(0) displayCoor.(1)
+          *)
+          plot displayCoor.(0) displayCoor.(1);
+          set_color !gridColor;
+          (*
+          Printf.printf "\tGrid at (%d, %d) x (%d, %d)\n" (displayCoor.(0)-1)
+          (displayCoor.(1)-1) 2 2;
+          *)
+          draw_rect (displayCoor.(0)-1) (displayCoor.(1)-1) 2 2
         end else (* We must plot a rectangle. *)
           let rHS = (Int.pow 2 (ml-cL)) - 1 in (* rectangle half size *)
           let x = displayCoor.(0) - rHS
           and y = displayCoor.(1) - rHS
           and w = 2*rHS + 1
           and h = 2*rHS + 1 in begin
+            (*
             Printf.printf "\tRectangle at (%d, %d) x (%d, %d)\n" x y w h;
-            Pervasives.flush Pervasives.stdout;
+            *)
             fill_rect x y (w-1) (h-1);
             set_color !gridColor;
             draw_rect (x-1) (y-1) (w+1) (h+1)
-          end
+          end;
+        (*Pervasives.flush Pervasives.stdout;*)
       ;;
       let prepareDisplayGrid gc ml =
         let size = (Int.pow 2 ml) + 1 in
