@@ -1,5 +1,6 @@
 (** This modules contains utilities functions used in the Admere's modules *)
 
+open AdmereTypes
 open AdmereExceptions
 open Batteries
 
@@ -44,4 +45,11 @@ let generateRelativeCoordinate dim refVec dx =
 let dxFromLevel l =
   1. /.
   (float_of_int (Int.pow 2 l))
+;;
+
+
+(*** accessing your data ! *)
+let accessNodeValue = function
+  Node(v,_) -> v
+  | _ -> raise AMR_NotANode
 ;;

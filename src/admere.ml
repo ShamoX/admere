@@ -10,19 +10,7 @@ open Graphics
 module Admere =
   functor(I : AdmereImplementation) -> functor(P : AdmereParameter) ->
     struct
-      (** This is internal metadata by cell *)
-      type cellMeta = {
-        mutable unrefine : bool;
-      }
-      type cell =
-          Node of I.t * cellMeta
-        | Grid of cell array * cellMeta
-      ;;
-
-      let accessNodeValue = function
-        Node(v,_) -> v
-        | _ -> raise AMR_NotANode
-      ;;
+      type tree = I.t cell ;;
 
       (** This array of vectors allow to explore the grid l-1 of a cell of
        * level l. *)
@@ -230,6 +218,7 @@ module Admere =
         ignore (iterRefinement has_changed 1 vectorOrigin grid);
         !has_changed
       ;;
+
 
     end
 
