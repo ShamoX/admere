@@ -8,4 +8,4 @@
 <**/*.cmo>: ocaml, byte
 <**/*.cmi>: ocaml, byte, native
 <**/*.cmx>: ocaml, native
-<test/*>: package(batteries)
+<test/*>: package(batteries), use_graphics
