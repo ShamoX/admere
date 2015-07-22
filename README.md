@@ -21,3 +21,18 @@ Clean
 -----
 
 > ocamlbuild -clean
+
+
+Test
+----
+
+### Simple random app
+
+This test simply fills the universe with random numbers and then increase the
+refinement if the number in a cell is superior to 2000. It will merge if numbers around are inferior to 500 (but it can hardly happens).
+
+#### Build
+
+> ocamlbuild -use-ocamlfind test/testExample.native
+
+#### Launch test
