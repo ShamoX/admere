@@ -1,7 +1,8 @@
 open AdmereTypes
 open AdmereImplementation
 open AdmereParameter
-open Admere;;
+open Admere
+open Graphics;;
 
 Random.self_init () ;;
 
@@ -43,10 +44,13 @@ module TestImplementation =
 
 module Test = Admere(TestImplementation)(TestParameter);;
 
+Graphics.auto_synchronize false;
+
 Test.drawGrid ~displayGrid:true ();
 Sys.command "sleep 3";
 while Test.checkRefinement () do
   Test.drawGrid ~displayGrid:true ();
+  Graphics.synchronize ();
   Sys.command "sleep 3"
 done;
 Sys.command "sleep 30"
