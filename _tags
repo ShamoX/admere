@@ -1,2 +1,11 @@
-<**/*>: package(batteries)
-<test/*>: package(batteries)
+"src": include
+<**/*.ml> or <**/*.mli> or <**/*.mlpack> or <**/*.ml.depends>: ocaml, package(batteries), use_graphics
+<**/*.byte>: ocaml, byte, program
+<**/*.odoc>: ocaml, doc
+<**/*.native>: ocaml, native, program
+<**/*.cma>: ocaml, byte, library
+<**/*.cmxa>: ocaml, native, library
+<**/*.cmo>: ocaml, byte
+<**/*.cmi>: ocaml, byte, native
+<**/*.cmx>: ocaml, native
+<test/*>: package(batteries), use_graphics
