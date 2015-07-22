@@ -216,6 +216,7 @@ module Admere =
       let checkRefinement () =
         let has_changed = ref false in
         ignore (iterRefinement has_changed 1 vectorOrigin grid);
+        Pervasives.flush Pervasives.stdout;
         !has_changed
       ;;
 
