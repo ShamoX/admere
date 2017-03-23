@@ -10,5 +10,5 @@
   "synopsis":
     "Ocaml implementation for a library allowing multi-dimensionnal adaptive mesh refinement",
   "package_type": [ "Lib", [] ],
-  "dependencies": []
+  "dependencies": [ { "package_name": "batteries", "constraints": null } ]
 }

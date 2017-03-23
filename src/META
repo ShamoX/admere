@@ -1,0 +1,13 @@
+# OASIS_START
+# DO NOT EDIT (digest: e9ca582537f952151d138ce4a872f5ee)
+version = "0.0.1"
+description =
+"Ocaml implementation for a library allowing multidimensional adaptive mesh refinement"
+requires = "batteries"
+archive(byte) = "libAdmere.cma"
+archive(byte, plugin) = "libAdmere.cma"
+archive(native) = "libAdmere.cmxa"
+archive(native, plugin) = "libAdmere.cmxs"
+exists_if = "libAdmere.cma"
+# OASIS_STOP
+

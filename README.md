@@ -1,7 +1,7 @@
 admere
 ======
 
-Ocaml implementation for a library allowing adaptive mesh refinement
+Ocaml implementation for a library allowing multidimensional adaptive mesh refinement
 
 Dependencies
 ------------

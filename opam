@@ -7,16 +7,16 @@ maintainer: "Roland Laurès <roland.laures@shamox.fr>"
 authors: "Roland Laurès <roland.laures@shamox.fr>"
 homepage: "https://github.com/ShamoX/admere"
 bug-reports: "https://github.com/ShamoX/admere/issues"
-license: "GPL v3"
+license: "GPL-3"
 dev-repo: "https://github.com/ShamoX/admere.git"
 build: [
-  ["./configure" "--prefix=%{prefix}%"]
-  [make]
+  ["ocaml" "setup.ml" "-configure" "--destdir" "%{prefix}%"]
+  ["ocaml" "setup.ml" "-build"]
 ]
-install: [make "install"]
+install: ["ocaml" "setup.ml" "-install"]
 remove: ["ocamlfind" "remove" "admere"]
 depends: [
   "ocamlfind" {build}
   "oasis" {build}
-
+  "batteries"
 ]
