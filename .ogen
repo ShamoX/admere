@@ -1,0 +1,14 @@
+{
+  "name": "admere",
+  "version": "0.0.1",
+  "license": "GPL v3",
+  "author": {
+    "username": "Roland Laurès",
+    "email": "roland.laures@shamox.fr"
+  },
+  "homepage": "https://github.com/ShamoX/admere",
+  "synopsis":
+    "Ocaml implementation for a library allowing multi-dimensionnal adaptive mesh refinement",
+  "package_type": [ "Lib", [] ],
+  "dependencies": []
+}
